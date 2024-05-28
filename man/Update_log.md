@@ -1,4 +1,4 @@
-## &#x273F; version 1.0, 2024/05/27 
+## &#x273F; version 1.0, 2024/05/28 
 - Simple and clean version of dashboard
 
 
