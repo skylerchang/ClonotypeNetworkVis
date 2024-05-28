@@ -7,7 +7,7 @@
 
 
 
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/d00ce99e-878b-4faf-b1e8-697198a75ad5
+<https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/d00ce99e-878b-4faf-b1e8-697198a75ad5, width="200">
 
 
 
