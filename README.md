@@ -11,7 +11,7 @@ Currently, the dashboard includes the following tabs and features:
 
 <video width="640" height="360" controls>
 
-< source src="https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/3c31133d-eb19-4bfa-95c4-fb584c4cb966" type="video/mp4">
+<source src="https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/3c31133d-eb19-4bfa-95c4-fb584c4cb966/Part1a.MP4" type="video/mp4">
 
 </video>
 
