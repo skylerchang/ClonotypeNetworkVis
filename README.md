@@ -6,7 +6,7 @@ This dashboard is designed to provide a clean, simple and accessible interface t
 Currently, the dashboard includes the following tabs and features:
 
 
-Part1
+
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/3c31133d-eb19-4bfa-95c4-fb584c4cb966
 
 
