@@ -1,7 +1,7 @@
 # Immune Repertoire Clonotype Network Dashboard
 
 ## Introduction
-This dashboard is designed to provide a clean, simple and accessible interface to explore and virsualize highly similar clonotypes. 
+This dashboard is designed to provide a clean, simple and accessible interface to explore and virsualize highly similar clonotypes from the immune sequencing data. 
 
 Currently, the dashboard includes the following tabs and features:
 
@@ -9,9 +9,51 @@ Currently, the dashboard includes the following tabs and features:
 
 
 
-<video width="320" height="240" controls>
-<source src="https://github.com/skylerchang/ClonotypeNetworkVis/main/video_tutorials/Part1a.MP4" type="video/MP4">
-</video>
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/3c31133d-eb19-4bfa-95c4-fb584c4cb966
+
+
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/650d8b24-ff22-4e7e-82fa-c612c54c9802
+
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/071190be-b497-4b43-8632-0832dbab1c5a
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/a8962952-f30b-4191-8005-4f09f83fcef2
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/4551dd07-a3ae-4f52-9c5e-b84b0c1e6acf
+
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/bba35f00-06b1-486c-8718-e7ba790578d4
+
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/826859c0-d9bd-4fdf-9050-00d6bcda9ac4
+
+
+
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/8fe528f2-ce30-4c9a-9da1-bc38437292e4
+
+
+
+
 
 
 This dashboard was built using many great tools in the R ecosystem. Thanks to all of the developers of these open source packages:
