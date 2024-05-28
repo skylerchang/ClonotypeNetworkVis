@@ -48,20 +48,28 @@ The Phylogenetic Analysis module provides insights into the evolutionary relatio
 For each module, we have prepared tutorial videos to guide you through their functionalities:
 
 - [Data Input and Processing Tutorial]
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/3c31133d-eb19-4bfa-95c4-fb584c4cb966
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/650d8b24-ff22-4e7e-82fa-c612c54c9802
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/071190be-b497-4b43-8632-0832dbab1c5a
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/d7f4912f-58fa-4e2d-87a6-00bcae7f592c
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/65d8efc3-ad43-4ae1-8fa5-fe3072a31dd1
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/6afe0ba5-2b92-4da7-a9f6-5aa582f9d58d
 
 - [Statistical Analysis Tutorial]
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/a8962952-f30b-4191-8005-4f09f83fcef2
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/936aaaa3-a71f-4d77-a7e0-d6de2688e77a
 
 - [Network Analysis Tutorial]
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/4551dd07-a3ae-4f52-9c5e-b84b0c1e6acf
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/bba35f00-06b1-486c-8718-e7ba790578d4
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/826859c0-d9bd-4fdf-9050-00d6bcda9ac4
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/cf9fcbea-421c-4d59-be7a-56e77c956b4f
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/7f682683-9348-48e2-986a-0f80ef0d382b
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/12342f58-27db-44c4-a59f-0d2a5fd4feea
 
 - [Phylogenetic Analysis Tutorial]
-https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/8fe528f2-ce30-4c9a-9da1-bc38437292e4
+
+https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/89a955b9-4e3d-4ed6-ac23-25a5c8aa0665
 
 We hope you find this dashboard useful for your immune repertoire analysis. If you have any questions or encounter any issues, please feel free to open an issue on this GitHub page.
 
