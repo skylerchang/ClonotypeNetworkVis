@@ -10,7 +10,7 @@ Currently, the dashboard includes the following tabs and features:
 
 
 <video width="320" height="240" controls>
-<source src="video_tutorials/Part1a.MP4" type="video/MP4">
+<source src="https://github.com/skylerchang/ClonotypeNetworkVis/main/video_tutorials/Part1a.MP4" type="video/MP4">
 </video>
 
 
