@@ -23,7 +23,7 @@ The Data Input and Processing module allows users to upload their own files or i
 The Statistical Analysis module provides various visualizations and analyses to understand the distribution and overlap of clonotypes:
 
 - **Clonotype Distribution**: View clonotype distributions across different junction lengths, cell types, samples, and V and J genes.
-- **Clonotype Overlap**: Check for clonotype overlaps across different samples, cell types, or gene segments.
+- **Clonotype Overlap**: Check for clonotype overlaps across different samples, cell types, or tissues.
 
 ## Network Analysis
 
