@@ -71,7 +71,8 @@ https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/12342f58-27db
 
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/89a955b9-4e3d-4ed6-ac23-25a5c8aa0665
 
-We hope you find this dashboard useful for your immune repertoire analysis. If you have any questions or encounter any issues, please feel free to open an issue on this GitHub page.
+## Contact
+We hope you find this dashboard useful for your immune repertoire analysis. If you have any questions or encounter any issues, please feel free to open an issue on this GitHub page. And feel free to contact with hchang02@uoguelph.ca.
 
 
 
