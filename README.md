@@ -16,7 +16,7 @@ The Data Input and Processing module allows users to upload their own files or i
 
 - **File Upload**: Easily upload your immune repertoire data files.
 - **Database Integration**: Seamlessly integrate your data with our extensive database or your own.
-- **Anchor Clustering**: Run Anchor Clustering to group amino acid sequences (1 Hamming distance) and generate cluster parameters for network features.
+- **Anchor Clustering**: Run Anchor Clustering to group amino acid sequences (1 Hamming distance) and generate cluster parameters for network features. For more details, you can check Anchor Clustering github page: https://github.com/skylerchang/Anchor_Clustering_Nt.
 
 ## Statistical Analysis
 
@@ -47,28 +47,35 @@ The Phylogenetic Analysis module provides insights into the evolutionary relatio
 
 For each module, we have prepared tutorial videos to guide you through their functionalities:
 
-- [Data Input and Processing Tutorial]
-
+- &#128209; **Data Input and Processing Tutorial**
+### Part1a:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/d7f4912f-58fa-4e2d-87a6-00bcae7f592c
 
+### Part1b:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/65d8efc3-ad43-4ae1-8fa5-fe3072a31dd1
 
+### Part1c:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/6afe0ba5-2b92-4da7-a9f6-5aa582f9d58d
 
-- [Statistical Analysis Tutorial]
+- &#x1F4CA; **Statistical Analysis Tutorial**
 
+### Part2:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/936aaaa3-a71f-4d77-a7e0-d6de2688e77a
 
-- [Network Analysis Tutorial]
+- &#x1F517; **Network Analysis Tutorial**
 
+### Part3a:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/cf9fcbea-421c-4d59-be7a-56e77c956b4f
 
+### Part3b:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/7f682683-9348-48e2-986a-0f80ef0d382b
 
+### Part3c:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/12342f58-27db-44c4-a59f-0d2a5fd4feea
 
-- [Phylogenetic Analysis Tutorial]
+- &#x1F332; **Phylogenetic Analysis Tutorial**
 
+### Part4:
 https://github.com/skylerchang/ClonotypeNetworkVis/assets/35077981/89a955b9-4e3d-4ed6-ac23-25a5c8aa0665
 
 ## Contact
