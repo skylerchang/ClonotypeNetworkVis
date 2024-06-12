@@ -30,10 +30,11 @@ siderbar <-
       menuItem("Network Analysis", icon = icon("code-branch"),
                menuSubItem("Scatter Plot of Network Parameters", tabName = "tab8"),
                menuSubItem("Grouped Clusters", tabName = "tab9"),
-               menuSubItem("Interactive Visualization", tabName = "tab10")
+               menuSubItem("Interactive Visualization", tabName = "tab10"),
+               menuSubItem("Interactive Visualization", tabName = "tab11")
       ),
       menuItem("Phylogenetic Analysis", icon = icon("network-wired"),
-               menuSubItem("Phylogenetic plot", tabName = "tab11")
+               menuSubItem("Phylogenetic plot", tabName = "tab12")
       )
     )
   )
@@ -256,6 +257,11 @@ body <- dashboardBody(
                             "Select factor to display (x axis) :",
                             choices = NULL
                 ),
+                conditionalPanel(
+                  condition = "input.selectedfactor1 == 'junction_length'",
+                  numericInput("x_min", "Minimum junction length ", value = 0),
+                  numericInput("x_max", "Maximum  junction length", value = 30)
+                ),
                 selectInput("selectedfactor2",
                             "Select another factor to display (fill):",
                             choices = NULL
@@ -433,8 +439,102 @@ body <- dashboardBody(
             )
     ),
     
-    ##### UI: Scatter Plot  ########
+    ##### UI: Circos Plot #########
     tabItem(tabName = "tab8",
+            tags$style(button_color_css),
+            titlePanel("Circos Plot"),
+            column(
+              3,
+              wellPanel(
+                box(title = "Select Plot Features:", width = NULL, solidHeader = TRUE, status = "primary",
+                    selectInput("selectedfactor_cp",
+                                "Select group of count V and J:",
+                                choices = NULL
+                    ),
+                    br(),
+                    uiOutput("dataset"),
+                    uiOutput("reads_ui"),
+                    br()),
+                
+                box(title = "Select Plot Features:", width = NULL, solidHeader = TRUE, status = "success",
+                    numericInput("top_cp", "Number of the maximum most V/J Pairs", value =10 , min = 1, max = 20),
+                    selectInput("colorvar_Vcol", "V Gene Color Palette",
+                                color_vars,
+                                selected = "Set1"
+                    ),
+                    
+                    selectInput("colorvar_Jcol", "J Gene Color Palette",
+                                color_vars,
+                                selected = "Set3"
+                    )),
+                
+                box(title = "Adjust your plot size:", width = NULL, solidHeader = TRUE, status = "warning",
+                    sliderInput(
+                      inputId = "cex_cp",
+                      label = "Size of the gene names",
+                      min = 0.3,
+                      max = 1.5,
+                      value = 1
+                    ),
+                    
+                    sliderInput(
+                      inputId = "width_cp",
+                      label = "Width of the output plot ",
+                      min = 400,
+                      max = 1200,
+                      value = 700
+                    ),
+                    
+                    sliderInput(
+                      inputId = "height_cp",
+                      label = "Height of the output plot ",
+                      min = 400,
+                      max = 1200,
+                      value = 600
+                    )
+                )
+                
+              )
+            ),
+            fluidRow(
+              mainPanel(
+                box(status = "success", width = 36, height = "700px",
+                    tabsetPanel(
+                      tabPanel("Circos Plot", plotOutput(outputId = "circos_plot")),
+                      tabPanel(
+                        "Download Plot",
+                        fluidRow(
+                          column(
+                            3,
+                            numericInput("fheight_cp", "Height (cm)", min=2, max=15, step=1, value = 10)
+                          ),
+                          column(
+                            3,
+                            numericInput("fwidth_cp", "Width (cm)", min=2, max=15, step=1, value = 10)
+                          ),
+                          column(
+                            3,
+                            selectInput("fformat_cp", "File type", choices=c("png","tiff","jpeg"), 
+                                        selected = "png", multiple = FALSE, selectize = TRUE)
+                          ),
+                          column(
+                            3,
+                            downloadButton('bn_download_cp', 'Download Plot')
+                          ),
+                          br(),
+                          br(),
+                          hr()
+                        )
+                      )
+                    )
+                )
+              )
+            )
+    ),
+    
+    
+    ##### UI: Scatter Plot  ########
+    tabItem(tabName = "tab9",
             tags$style(button_color_css),
             titlePanel("Scatter Plot and Static Cluster Network"),
             column(3,
@@ -527,7 +627,7 @@ body <- dashboardBody(
     ),
     
     ##### UI: Static Grouped Visualization  ########
-    tabItem(tabName = "tab9",
+    tabItem(tabName = "tab10",
             tags$style(button_color_css),
             titlePanel("Show Grouped Clusters"),
             column(3,
@@ -611,7 +711,7 @@ body <- dashboardBody(
     ),
     
     #### UI: Interactive Visualization  ########
-    tabItem(tabName = "tab10",
+    tabItem(tabName = "tab11",
             tags$style(button_color_css),
             titlePanel("Interactive Visualization by Cluster"),
             column(3,
@@ -647,7 +747,7 @@ body <- dashboardBody(
             )
     ),
     ##### UI: Phylogenetic #######
-    tabItem(tabName = "tab11",
+    tabItem(tabName = "tab12",
             tags$style(button_color_css),
             titlePanel("Phylogenetic Plot"),
             column(3,
@@ -656,7 +756,15 @@ body <- dashboardBody(
                      textInput("phy_cluster", "Cluster ID:"),
                      selectInput("phy_group", "Color Group",choices = NULL),
                      selectInput("phy_color", "Color Palette", color_vars, selected = "Set1"),
-                     selectInput("phy_layout", "Phylogenetic Tree Layout", ggtree_layouts, selected="circular")),
+                     selectInput("phy_layout", "Phylogenetic Tree Layout", ggtree_layouts, selected="circular"),
+                     conditionalPanel(
+                       condition = "input.phy_layout == 'fan'",
+                       sliderInput("open_angle", "Open Angle", min = 0, max = 360, value = 120)
+                     ),
+                     conditionalPanel(
+                       condition = "input.phy_layout == 'ellipse' || input.phy_layout == 'fan' || input.phy_layout == 'circular'",
+                       selectInput("branch_length", "Branch Length", choices = c("none", "branch.length"), selected = "none")
+                     )),
                      br(),
                      br(),
                      box(title = "Adjust Phylogenetic Tree Plot:", width = NULL, solidHeader = TRUE, status = "warning",
@@ -676,6 +784,9 @@ body <- dashboardBody(
                        value = 2
                      ),
                      
+                     checkboxInput("include_msa", "Include MSA Plot", value = FALSE),
+                     conditionalPanel(
+                       condition = "input.include_msa == true",
                      sliderInput(
                        inputId = "msa_off",
                        label = "Distance between Tree and Multiple Sequence Alignment (MSA)",
@@ -690,6 +801,7 @@ body <- dashboardBody(
                        min = 1,
                        max = 15,
                        value = 5
+                     )
                      ),
                                       
                      

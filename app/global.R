@@ -102,7 +102,9 @@ ggtree_layouts <- c(
   "ellipse" = "ellipse",
   "circular" = "circular",
   "equal_angle" = "equal_angle",
-  "daylight" = "daylight"
+  "daylight" = "daylight",
+  "fan" = "fan",
+  "slanted" = "slanted"
 )
 
 source(here("R", "functions.R"))

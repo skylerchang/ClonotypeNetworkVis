@@ -17,7 +17,7 @@ server <- function(input, output, session) {
 
   output$dataTable <- DT::renderDataTable({
     req(data_input())
-    datatable(data_input(), options = list(pageLength = 6,scrollX = TRUE))
+    datatable(data_input(), options = list(pageLength = 6, scrollX = TRUE))
   })
 
   output$columnsList <- renderUI({
@@ -123,7 +123,7 @@ server <- function(input, output, session) {
         }
       }
       datatable(df, options = list(pageLength = 6, scrollX = TRUE))
-      #head(df, 10)
+      # head(df, 10)
     })
   })
 
@@ -147,7 +147,6 @@ server <- function(input, output, session) {
       if (!is.null(selected_df) && "meta_info" %in% names(selected_df)) {
         df$meta_info <- selected_df$meta_info
       }
-      
     })
   })
 
@@ -170,10 +169,9 @@ server <- function(input, output, session) {
 
   output$filteredDataTable <- DT::renderDataTable({
     df <- filteredData()
-    datatable(df, options = list(pageLength = 6, scrollX = TRUE
-    ))
+    datatable(df, options = list(pageLength = 6, scrollX = TRUE))
   })
-  
+
 
   acData <- reactiveVal()
   observeEvent(input$applySelection, {
@@ -291,7 +289,7 @@ server <- function(input, output, session) {
 
   output$dataTabledefault <- renderDataTable(
     req(df_reactive()),
-    options = list(pageLength = 6,scrollX = TRUE)
+    options = list(pageLength = 6, scrollX = TRUE)
   )
 
 
@@ -365,7 +363,6 @@ server <- function(input, output, session) {
   output$DefaultACdata <- DT::renderDataTable({
     ac2 <- acdefault()
     datatable(ac2, options = list(pageLength = 6, scrollX = TRUE))
-
   })
 
 
@@ -495,10 +492,10 @@ server <- function(input, output, session) {
     acresultdata(df)
   })
 
-  
-  
-  
-  
+
+
+
+
 
   output$column_name_inputs <- renderUI({
     df <- acresultdata()
@@ -526,14 +523,14 @@ server <- function(input, output, session) {
       return(pieces)
     }))
 
-    
+
     # Extract input names for new columns
     col_names <- sapply(1:ncol(split_data), function(i) input[[paste0("col_name", i)]])
     colnames(split_data) <- col_names
     df <- cbind(df, split_data)
     df$meta_info <- NULL
     rownames(df) <- NULL
-    acresultdata(df) 
+    acresultdata(df)
   })
 
 
@@ -542,7 +539,7 @@ server <- function(input, output, session) {
     req(acresultdata())
     output$dataHead <- DT::renderDataTable({
       req(acresultdata())
-      datatable(acresultdata(),options = list(pageLength = 6,scrollX = TRUE))
+      datatable(acresultdata(), options = list(pageLength = 6, scrollX = TRUE))
     })
   })
 
@@ -560,8 +557,8 @@ server <- function(input, output, session) {
 
 
   output$processedTable <- DT::renderDataTable({
-    req(processed_reactive()) 
-    datatable(processed_reactive(), options = list(pageLength = 6,scrollX = TRUE ))
+    req(processed_reactive())
+    datatable(processed_reactive(), options = list(pageLength = 6, scrollX = TRUE))
   })
 
 
@@ -571,24 +568,23 @@ server <- function(input, output, session) {
   ######################## Clonotype Distribution  ######################
 
   observe({
-    
     if (is.null(acresultdata()) || nrow(acresultdata()) == 0) {
       # Initialize data_dis as an empty dataframe or handle the case accordingly
-      data_dis <- data.frame()  # Create an empty dataframe with no columns
+      data_dis <- data.frame() # Create an empty dataframe with no columns
     } else {
       # Proceed with your existing code
       data_dis <- acresultdata()
-      
-      data_dis <- data_dis %>% 
-        dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>% 
+
+      data_dis <- data_dis %>%
+        dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>%
         dplyr::mutate(j_family = gsub("-.*", "", j_call))
     }
-    
+
 
     all_columns <- colnames(data_dis)
 
     # Specify columns to exclude
-    exclude_columns <- c("sequence_id", "cluster", "junction", "reads", "read" )
+    exclude_columns <- c("sequence_id", "cluster", "junction", "reads", "read")
 
     # Remove the specified columns from the list
     filtered_columns <- setdiff(all_columns, exclude_columns)
@@ -599,7 +595,8 @@ server <- function(input, output, session) {
   })
 
   plot_output <- reactive({
-    data <- acresultdata() %>% dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>% 
+    data <- acresultdata() %>%
+      dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>%
       dplyr::mutate(j_family = gsub("-.*", "", j_call))
     factor1 <- input$selectedfactor1 # Store reactive input in a local variable
     factor2 <- input$selectedfactor2
@@ -637,12 +634,12 @@ server <- function(input, output, session) {
     colors <- colorRampPalette(palette)(length(unique(data_new[[factor2]])))
     color_list <- setNames(colors, unique(data_new[[factor2]]))
 
-    
-    
-    y_variable <- if(input$yAxisType == "percentage") "percentage" else "n"
-    
-    
-    ggplot(data_new, aes(x = get(factor1), y = get(y_variable), fill = get(factor2))) +
+
+
+    y_variable <- if (input$yAxisType == "percentage") "percentage" else "n"
+
+
+    p <- ggplot(data_new, aes(x = get(factor1), y = get(y_variable), fill = get(factor2))) +
       geom_bar(position = input$bar_type, stat = "identity") +
       scale_fill_manual(values = color_list) +
       facet_wrap(~locus) +
@@ -662,7 +659,13 @@ server <- function(input, output, session) {
         strip.background = element_blank(),
         strip.text = element_text(color = "black", face = "bold", size = input$axis_size)
       )
-
+    # Set x-axis limits if the selected factor is 'junction_length'
+    if (input$selectedfactor1 == "junction_length") {
+      x_min <- input$x_min
+      x_max <- input$x_max
+      p <- p + xlim(x_min, x_max)
+    }
+    p
 
     # Return the plot object
   })
@@ -797,16 +800,16 @@ server <- function(input, output, session) {
   # Update choices for selectInput based on column names of the data
   observe({
     list1 <- names(acresultdata())
-    selected_indices1<- 7:length(list1)
+    selected_indices1 <- 7:length(list1)
     selected_colnames1 <- list1[selected_indices1]
-    exclude_columns1 <- c( "reads", "read" )
+    exclude_columns1 <- c("reads", "read")
     selected_colnames1 <- setdiff(selected_colnames1, exclude_columns1)
     updateSelectInput(session, "selectedColumnOverlap",
       choices = selected_colnames1
     )
   })
 
-  
+
 
   processed_upset <- reactiveVal()
 
@@ -1111,7 +1114,7 @@ server <- function(input, output, session) {
 
     p
   })
-  
+
 
 
   plot_upset <- reactive({
@@ -1135,38 +1138,272 @@ server <- function(input, output, session) {
       )
     s2 <-
       subplot(intersect_size_chart,
-              grid,
-              nrows = 2,
-              shareX = TRUE
+        grid,
+        nrows = 2,
+        shareX = TRUE
       ) %>% layout(showlegend = FALSE)
 
     subplot(s1, s2, widths = c(0.3, 0.7))
   })
 
-  
+
   output$plotly_upset <- renderPlotly({
-    plot_upset()  # Use the reactive expression here
+    plot_upset() # Use the reactive expression here
   })
-  
-  
+
+
   output$download_up <- downloadHandler(
     filename = function() {
-      paste0("Upset_plot.",input$extension_up)
+      paste0("Upset_plot.", input$extension_up)
     },
-    
     content = function(file) {
+      tempFile <- tempfile(fileext = ".html")
+      p <- plot_upset()
+      htmlwidgets::saveWidget(p, tempFile, selfcontained = TRUE)
 
-        tempFile <- tempfile(fileext = ".html")
-        p <- plot_upset()
-        htmlwidgets::saveWidget(p, tempFile, selfcontained = TRUE)
-        
-        # Use webshot to take a screenshot of the HTML file
-        webshot(tempFile, file = file, delay = 0.2, vwidth = input$user_width_up, vheight = input$user_height_up, zoom=2)
-        
-        
-      }
+      # Use webshot to take a screenshot of the HTML file
+      webshot(tempFile, file = file, delay = 0.2, vwidth = input$user_width_up, vheight = input$user_height_up, zoom = 2)
+    }
+  )
+
+
+  ######################## Circos Plot  ######################
+
+  # Update choices for selectInput based on column names of the data
+  observe({
+    list_cp <- names(acresultdata())
+    selected_indices_cp <- 7:length(list_cp)
+    selected_colnames_cp <- list_cp[selected_indices_cp]
+    exclude_columns_cp <- c("reads", "read")
+    selected_colnames_cp <- setdiff(selected_colnames_cp, exclude_columns_cp)
+    updateSelectInput(session, "selectedfactor_cp",
+      choices = selected_colnames_cp
     )
-    
+  })
+
+  output$dataset <- renderUI({
+    temp_cp <- acresultdata()
+    column_cp <- req(input$selectedfactor_cp)
+    valid_sets <- unique(temp_cp[[column_cp]])
+    selectInput(
+      "dataset",
+      "Select V/J pair target",
+      choices = valid_sets,
+      selectize = TRUE,
+      selected = valid_sets
+    )
+  })
+
+  output$reads_ui <- renderUI({
+    # Load your data
+    temp_cp <- acresultdata()
+
+    # Check if the 'read' or 'reads' column exists
+    if ("read" %in% names(temp_cp) || "reads" %in% names(temp_cp)) {
+      # If the column exists, show a checkbox
+      tagList(
+        checkboxInput("reads_check", "Use read number by sample", value = FALSE),
+
+        # Conditional numeric input to specify the threshold
+        conditionalPanel(
+          condition = "input.reads_check == true",
+          numericInput("reads_threshold", "Enter minimum reads threshold for each sample:", value = 500, min = 500)
+        ),
+        conditionalPanel(
+          condition = "input.reads_check == false",
+          HTML("<div style='color: red;'>Reminder: Choosing not to use the read number will default to counting the V/J usage of each clonotype.</div>")
+        )
+      )
+    } else {
+      # If the column does not exist, show a reminder
+      tagList(
+        HTML("<div style='color: red;'>Reminder: Clonotypes in this dataset have no read number. The V/J usage of each clonotype will be counted. </div>")
+      )
+    }
+  })
+
+
+  circos_output <- reactive({
+    # Prepare dataset for circos group
+    req(acresultdata(), input$selectedfactor_cp, input$dataset, input$colorvar_Vcol, input$colorvar_Jcol)
+
+    temp_cp <- acresultdata()
+    data_cp <- temp_cp[temp_cp[[input$selectedfactor_cp]] == input$dataset, ]
+    if ("read" %in% names(temp_cp) || "reads" %in% names(temp_cp)) {
+      # Further filter if 'Consider reads number by sample' is checked
+      if (input$reads_check) {
+        read_col <- ifelse("reads" %in% names(temp_cp), "reads", "read")
+        data_cp[[read_col]] <- as.numeric(data_cp[[read_col]])
+        data_cp <- data_cp %>%
+          group_by(sample) %>%
+          mutate(total = sum(get(read_col))) %>%
+          filter(total >= input$reads_threshold)
+      } else {
+        data_cp <- data_cp %>%
+          group_by(junction, v_call, j_call) %>%
+          mutate(reads = n())
+      }
+    } else {
+      data_cp <- data_cp %>%
+        group_by(junction, v_call, j_call) %>%
+        mutate(reads = n())
+    }
+    data_cp
+  })
+
+
+  circos_plot_func <- reactive({
+    data_cp <- req(circos_output())
+    if (nrow(data_cp) == 0) {
+      return()
+    }
+
+
+
+    # Plot dimensions
+    width <- input$width_cp
+    height <- input$height_cp
+
+
+
+    all_v_genes <- unique(data_cp$v_call)
+    all_j_genes <- unique(data_cp$j_call)
+
+
+    v_gene_colors <- colorRampPalette(brewer.pal(8, input$colorvar_Vcol))(length(all_v_genes))
+    j_gene_colors <- colorRampPalette(brewer.pal(8, input$colorvar_Jcol))(length(all_j_genes))
+
+
+    names(v_gene_colors) <- all_v_genes
+    names(j_gene_colors) <- all_j_genes
+    combined_colors <- c(v_gene_colors, j_gene_colors)
+
+
+    # list_data <- split(data_cp, data_cp$sample)
+
+    generate_matrix <- function(subset_data) {
+      read_col <- ifelse("reads" %in% names(subset_data), "reads", "read")
+      df_wide <- subset_data %>%
+        group_by(junction, v_call, j_call) %>%
+        summarise(n = sum(get(read_col)), .groups = "drop") %>%
+        group_by(v_call, j_call) %>%
+        summarise(n_total = sum(n), .groups = "drop") %>%
+        arrange(-n_total) %>%
+        pivot_wider(names_from = v_call, values_from = n_total, values_fill = 0)
+
+      mat <- as.matrix(df_wide[, -1])
+      rownames(mat) <- df_wide$j_call
+      return(mat)
+    }
+
+    # subset_data = list_data[[sample]]
+    subset_data <- data_cp
+    read_col <- ifelse("reads" %in% names(subset_data), "reads", "read")
+
+    v_gene_linkage <- subset_data %>%
+      group_by(junction, v_call, j_call) %>%
+      summarise(n = sum(get(read_col)), .groups = "drop") %>%
+      group_by(v_call) %>%
+      summarise(v_total_sum = sum(n), .groups = "drop")
+
+    j_gene_linkage <- subset_data %>%
+      group_by(junction, v_call, j_call) %>%
+      summarise(n = sum(get(read_col)), .groups = "drop") %>%
+      group_by(j_call) %>%
+      summarise(j_total_sum = sum(n), .groups = "drop")
+
+    if (nrow(j_gene_linkage) <= input$top_cp) {
+      j_gene_threshold <- min(j_gene_linkage$j_total_sum, na.rm = TRUE)
+    } else {
+      j_gene_threshold <- j_gene_linkage %>%
+        arrange(-j_total_sum) %>%
+        .[input$top_cp, "j_total_sum"]
+    }
+
+
+    if (nrow(v_gene_linkage) <= input$top_cp) {
+      v_gene_threshold <- min(v_gene_linkage$v_total_sum, na.rm = TRUE)
+    } else {
+      v_gene_threshold <- v_gene_linkage %>%
+        arrange(-v_total_sum) %>%
+        .[input$top_cp, "v_total_sum"]
+    }
+
+    mat <- generate_matrix(subset_data)
+
+    chordDiagram(mat, annotationTrack = "grid", preAllocateTracks = 1, grid.col = combined_colors)
+    circos.trackPlotRegion(track.index = 1, panel.fun = function(x, y) {
+      xlim <- get.cell.meta.data("xlim")
+      ylim <- get.cell.meta.data("ylim")
+      sector.name <- get.cell.meta.data("sector.index")
+      label_sector <- FALSE
+      # Check if it's a v_gene sector
+      if (sector.name %in% v_gene_linkage$v_call) {
+        if (v_gene_linkage[v_gene_linkage$v_call == sector.name, "v_total_sum"] >= v_gene_threshold) {
+          label_sector <- TRUE
+        }
+      }
+      # Check if it's a j_gene sector
+      if (sector.name %in% j_gene_linkage$j_call) {
+        if (j_gene_linkage[j_gene_linkage$j_call == sector.name, "j_total_sum"] >= j_gene_threshold) {
+          label_sector <- TRUE
+        }
+      }
+
+      if (label_sector) {
+        circos.text(mean(xlim), ylim[1] + .4, sector.name, facing = "clockwise", cex = input$cex_cp, niceFacing = TRUE, adj = c(-0, 0.4), font = 2)
+      }
+    }, bg.border = NA)
+  })
+
+
+  output$circos_plot <- renderPlot(
+    circos_plot_func(),
+    width = function() {
+      input$width_cp
+    },
+    height = function() {
+      input$height_cp
+    }
+  )
+
+
+
+  # store some values
+  store_cp <- reactiveValues(dname = "Circos_Result")
+
+  # create filename
+  fn_downloadname_cp <- reactive({
+    if (input$fformat_cp == "png") filename <- paste0(store_cp$dname, ".png", sep = "")
+    if (input$fformat_cp == "tiff") filename <- paste0(store_cp$dname, ".tiff", sep = "")
+    if (input$fformat_cp == "jpeg") filename <- paste0(store_cp$dname, ".jpeg", sep = "")
+    return(filename)
+  })
+
+
+
+  # download function
+  fn_download_cp <- function() {
+    fheight_cp <- input$fheight_cp
+    fwidth_cp <- input$fwidth_cp
+
+    if (input$fformat_cp == "png") png(fn_downloadname_cp(), height = fheight_cp, width = fwidth_cp, res = 400, units = "cm")
+    if (input$fformat_cp == "tiff") tiff(fn_downloadname_cp(), height = fheight_cp, width = fwidth_cp, res = 400, units = "cm", compression = "lzw")
+    if (input$fformat_cp == "jpeg") jpeg(fn_downloadname_cp(), height = fheight_cp, width = fwidth_cp, res = 400, units = "cm", quality = 100)
+
+    circos_plot_func()
+    dev.off()
+  }
+
+
+  # download handler
+  output$bn_download_cp <- downloadHandler(
+    filename = fn_downloadname_cp,
+    content = function(file) {
+      fn_download_cp()
+      file.copy(fn_downloadname_cp(), file, overwrite = T)
+    }
+  )
 
   #### ----------------------------####
   #### Network Analysis          #####
@@ -1180,19 +1417,22 @@ server <- function(input, output, session) {
     xvar_name <- names(axis_vars)[axis_vars == input$xvar]
     yvar_name <- names(axis_vars)[axis_vars == input$yvar]
     sizevar_name <- names(axis_vars)[axis_vars == input$sizevar]
-    
-    
-    data <- processed_reactive() 
-    data <- data %>% dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>% 
+
+
+    data <- processed_reactive()
+    data <- data %>%
+      dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>%
       dplyr::mutate(j_family = gsub("-.*", "", j_call))
-    
+
     data$tooltip_text <- paste("Cluster ID: ", data$cluster, "\n",
-                               "V subgroup: ", data$v_family, "\n",
-                               "J subgroup: ", data$j_family, "\n",
-                               xvar_name, ": ", data[[input$xvar]], "\n", 
-                               yvar_name, ": ", data[[input$yvar]], "\n", 
-                               sizevar_name, ": ", data[[input$sizevar]], "\n",sep = "")
-    
+      "V subgroup: ", data$v_family, "\n",
+      "J subgroup: ", data$j_family, "\n",
+      xvar_name, ": ", data[[input$xvar]], "\n",
+      yvar_name, ": ", data[[input$yvar]], "\n",
+      sizevar_name, ": ", data[[input$sizevar]], "\n",
+      sep = ""
+    )
+
     if ("sample" %in% names(data)) {
       data <- data %>%
         group_by(cluster) %>%
@@ -1202,110 +1442,114 @@ server <- function(input, output, session) {
       colors <- colorRampPalette(palette)(colorCount)
       data$samples <- factor(data$samples)
       p <- ggplot(data, aes_string(x = input$xvar, y = input$yvar, size = input$sizevar, fill = "samples", text = "tooltip_text", key = "cluster")) +
-          geom_point(pch = 21) +
-          theme_bw() + scale_fill_manual(values = colors) +
-          labs(x = xvar_name, y = yvar_name, fill = "Number of samples", size = "")
+        geom_point(pch = 21) +
+        theme_bw() +
+        scale_fill_manual(values = colors) +
+        labs(x = xvar_name, y = yvar_name, fill = "Number of samples", size = "")
     } else {
       p <- ggplot(data, aes_string(x = input$xvar, y = input$yvar, size = input$sizevar, text = "tooltip_text", key = "cluster")) +
-        geom_point(pch = 21,colour = "orange") +
+        geom_point(pch = 21, colour = "orange") +
         theme_bw() +
         labs(x = xvar_name, y = yvar_name, size = "")
     }
     ggplotly(p, tooltip = "text")
-    
-  })  
-  
-  # Output of scatter plot 
+  })
+
+  # Output of scatter plot
   output$plot1 <- renderPlotly({
     vis()
   })
-  
-  
+
+
   # Reactive value to store data for clicked clusters
   clicked_clusters <- reactiveVal(list())
-  
-    observe({
-      
-      list=names(acresultdata())
-      # Create a vector of the desired column indices
-      selected_indices <- c(2, 3, 7:length(list))
 
-      # Extract the column names based on the selected indices
-      selected_colnames <- list[selected_indices]
-      exclude_columns2 <- c( "reads", "read" )
-  
-      selected_colnames <- setdiff(selected_colnames, exclude_columns2)
+  observe({
+    list <- names(acresultdata())
+    # Create a vector of the desired column indices
+    selected_indices <- c(2, 3, 7:length(list))
 
-      # Update the select input with the selected column names
-      updateSelectInput(session, "group",
-                        choices = selected_colnames)
+    # Extract the column names based on the selected indices
+    selected_colnames <- list[selected_indices]
+    exclude_columns2 <- c("reads", "read")
+
+    selected_colnames <- setdiff(selected_colnames, exclude_columns2)
+
+    # Update the select input with the selected column names
+    updateSelectInput(session, "group",
+      choices = selected_colnames
+    )
   })
-  
-  
+
+
   net2 <- reactive({
-    data_p <- processed_reactive() %>% select(-sequence_id, -v_call, -j_call, -junction) %>% distinct()
-    data_a <- acresultdata() %>% mutate(locus = gsub("V.*", "", v_call)) %>% dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>% 
+    data_p <- processed_reactive() %>%
+      select(-sequence_id, -v_call, -j_call, -junction) %>%
+      distinct()
+    data_a <- acresultdata() %>%
+      mutate(locus = gsub("V.*", "", v_call)) %>%
+      dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>%
       dplyr::mutate(j_family = gsub("-.*", "", j_call))
     req(input$group)
     group_value <- rlang::sym(input$group)
     palette <- brewer.pal(8, input$colors2)
     colorCount <- length(unique(data_a[[group_value]]))
     colors <- colorRampPalette(palette)(colorCount)
-    color_list<-setNames(colors, unique(data_a[[group_value]]))
+    color_list <- setNames(colors, unique(data_a[[group_value]]))
     # Color mapping function
     get_color <- function(value) {
       return(color_list[as.character(value)])
     }
-    
+
     # Apply the color mapping to the data dataframe
-    data_a <- data_a %>% 
+    data_a <- data_a %>%
       mutate(group_col = sapply(get(group_value), get_color))
     return(list(data_p = data_p, data_a = data_a))
-    
-  }) 
-  
+  })
+
 
   # Observe plotly click event
   observeEvent(event_data("plotly_click"), {
     click_info <- event_data("plotly_click")
     if (!is.null(click_info)) {
       net_data <- net2()
-      cluster_data <- net_data$data_p[net_data$data_p$cluster == click_info$key,]
+      cluster_data <- net_data$data_p[net_data$data_p$cluster == click_info$key, ]
       # Append the new plot data to the list
       clicked_clusters(c(clicked_clusters(), list(cluster_data)))
     }
   })
-  
-  
+
+
   # Generate and display additional plots
   output$additionalPlots <- renderUI({
     plot_output_list <- lapply(seq_along(clicked_clusters()), function(i) {
       plotName <- paste("plot_cluster", i, sep = "_")
-      seqlogoplotName <-  paste("seqlogoplot_cluster", i, sep = "_")
+      seqlogoplotName <- paste("seqlogoplot_cluster", i, sep = "_")
       titleName <- paste("title_cluster", i, sep = "_")
       list(
-        textOutput(titleName),  # Title element
-        plotOutput(plotName, height = input$height1, width = input$width1 ), # Plot element
-        plotOutput(seqlogoplotName, height = input$height2, width = input$width2)# Seqlogo Plot element
+        textOutput(titleName), # Title element
+        plotOutput(plotName, height = input$height1, width = input$width1), # Plot element
+        plotOutput(seqlogoplotName, height = input$height2, width = input$width2) # Seqlogo Plot element
       )
     })
-    
+
     # Ensure plot_output_list is not empty
     if (length(plot_output_list) > 0) {
       rows <- lapply(seq(1, length(plot_output_list), by = 2), function(i) {
-        plot_elements <- plot_output_list[i:min(i+1, length(plot_output_list))]
-        fluidRow(column(6, plot_elements[[1]]),
-                 if (length(plot_elements) > 1) column(6, plot_elements[[2]]) else NULL)
+        plot_elements <- plot_output_list[i:min(i + 1, length(plot_output_list))]
+        fluidRow(
+          column(6, plot_elements[[1]]),
+          if (length(plot_elements) > 1) column(6, plot_elements[[2]]) else NULL
+        )
       })
-      
+
       do.call(tagList, rows)
     } else {
       # Handle the case where there are no plots
       return(NULL)
     }
-  
   })
-  
+
   # Render each plot in the list
   observe({
     for (i in seq_along(clicked_clusters())) {
@@ -1315,7 +1559,7 @@ server <- function(input, output, session) {
         title_output_id <- paste("title_cluster", plot_index, sep = "_")
         plot_output_id <- paste("plot_cluster", plot_index, sep = "_")
         seqlogoplot_output_id <- paste("seqlogoplot_cluster", plot_index, sep = "_")
-        
+
         # Set the title for each plot
         output[[title_output_id]] <- renderText({
           cluster_id <- unique(plot_data$cluster)
@@ -1324,352 +1568,369 @@ server <- function(input, output, session) {
         output[[plot_output_id]] <- renderPlot({
           if (!is.null(plot_data) && nrow(plot_data) > 0) {
             net_data <- net2()
-            net_data_all<-net_data$data_a
+            net_data_all <- net_data$data_a
             row.names(net_data_all) <- NULL
-            plot_network(plot_data, 
-                         net_data_all, 
-                                group = input$group,
-                                color_col = "group_col",
-                                scale = input$scalesize, 
-                                circle_color = "grey", 
-                                layout = input$layouts, 
-                                legend = "on",
-                                seed=input$seed,
-                                text_size=input$legendfontsize)
-            
+            plot_network(plot_data,
+              net_data_all,
+              group = input$group,
+              color_col = "group_col",
+              scale = input$scalesize,
+              circle_color = "grey",
+              layout = input$layouts,
+              legend = "on",
+              seed = input$seed,
+              text_size = input$legendfontsize
+            )
           }
         })
         output[[seqlogoplot_output_id]] <- renderPlot({
           if (!is.null(plot_data) && nrow(plot_data) > 0) {
             net_data <- net2()
-            net_data_all<-net_data$data_a
+            net_data_all <- net_data$data_a
             row.names(net_data_all) <- NULL
-            plot_seqlogo(plot_data,net_data_all, input$seqlogofontsize)
-
+            plot_seqlogo(plot_data, net_data_all, input$seqlogofontsize)
           }
         })
       })
     }
   })
-  
-  
+
+
   # Observe event for reset button
   observeEvent(input$resetnet, {
-    clicked_clusters(list())  
+    clicked_clusters(list())
   })
-  
+
   # Observe event for undo button
   observeEvent(input$undo, {
     current_list <- clicked_clusters()
     if (length(current_list) > 0) {
-      clicked_clusters(head(current_list, -1))  # Remove the last cluster
+      clicked_clusters(head(current_list, -1)) # Remove the last cluster
     }
-  }
-  )
-  
-######################## Grouped Cluster  ######################
-  
+  })
+
+  ######################## Grouped Cluster  ######################
+
   spread <- reactive({
-    small_set <- processed_reactive() %>% select(-sequence_id, -v_call, -j_call) %>% distinct()
-    p<-ggplot(small_set, aes(log10(seqs), spread, text = paste("Cluster ID: ", small_set$cluster, "\n",
-                                                               "Spread: ", small_set$spread , "\n",
-                                                               "Cluster size (in log10): ", round(log10(small_set$seqs),2), "\n") , 
-                             key = "cluster")) + 
-      geom_point(color = "#008000", alpha=0.2)+
+    small_set <- processed_reactive() %>%
+      select(-sequence_id, -v_call, -j_call) %>%
+      distinct()
+    p <- ggplot(small_set, aes(log10(seqs), spread,
+      text = paste(
+        "Cluster ID: ", small_set$cluster, "\n",
+        "Spread: ", small_set$spread, "\n",
+        "Cluster size (in log10): ", round(log10(small_set$seqs), 2), "\n"
+      ),
+      key = "cluster"
+    )) +
+      geom_point(color = "#008000", alpha = 0.2) +
       labs(
         title = "",
         x = "Cluster size (log10) ",
         y = "Spread",
       ) +
       theme_bw()
-  
-    ggplotly(p, tooltip = "text") 
-      
+
+    ggplotly(p, tooltip = "text")
   })
-  
-  
-  
-  # Output of scatter plot 
+
+
+
+  # Output of scatter plot
   output$groupSpread <- renderPlotly({
     spread()
   })
-  
-  
-  
-  
+
+
+
+
 
   net3 <- reactive({
-    data_p <- processed_reactive() %>% select(-sequence_id, -v_call, -j_call) %>% distinct()
-    
+    data_p <- processed_reactive() %>%
+      select(-sequence_id, -v_call, -j_call) %>%
+      distinct()
+
     data_p <- data_p[data_p$spread >= input$spread_lower & data_p$spread <= input$spread_upper, ]
     data_p <- data_p[log10(data_p$seqs) >= input$size_lower & log10(data_p$seqs) <= input$size_upper, ]
 
-    data_p$groupname <-"Group"
-    
+    data_p$groupname <- "Group"
+
     colorCount <- length(unique(data_p$cluster))
     palette <- brewer.pal(8, input$colors3)
     colors <- colorRampPalette(palette)(colorCount)
-    color_list<- setNames(colors, unique(data_p$cluster))
+    color_list <- setNames(colors, unique(data_p$cluster))
 
-    
+
     data_p <- data_p %>%
       dplyr::mutate(cluster = as.character(cluster)) %>%
       left_join(data.frame(cluster = names(color_list), cluster_col = color_list), by = "cluster") %>%
-      dplyr::mutate(cluster = as.double(cluster)) 
-  }) 
-  
+      dplyr::mutate(cluster = as.double(cluster))
+  })
 
 
-    
 
-  
+
+
+
   group_output <- eventReactive(input$goButton, {
     net_data3 <- net3()
     cluster_number <- length(unique(net_data3$cluster))
     showModal(modalDialog(
-      title = paste( "Please Wait", cluster_number, "Clusters Detected"),
+      title = paste("Please Wait", cluster_number, "Clusters Detected"),
       "Generating the network plot. Please wait...",
       easyClose = FALSE,
       footer = NULL
     ))
-    
-    
-     
-    plot_network(net_data3, 
-                           net_data3, 
-                           group = "groupname",
-                           color_col = "cluster_col",
-                           scale = input$scalesize3, 
-                           circle_color = "red", 
-                           layout = input$layouts3, 
-                           legend = "off",
-                           seed = input$seed3)
-    
+
+
+
+    plot_network(net_data3,
+      net_data3,
+      group = "groupname",
+      color_col = "cluster_col",
+      scale = input$scalesize3,
+      circle_color = "red",
+      layout = input$layouts3,
+      legend = "off",
+      seed = input$seed3
+    )
+
     removeModal()
   })
-  
+
   output$groupVis <- renderPlot(
     group_output(),
-    width = function()
-      input$width3,
-    height = function()
+    width = function() {
+      input$width3
+    },
+    height = function() {
       input$height3
-    )
-  
-  
+    }
+  )
 
-  
+
+
+
   # store some values
-  store <- reactiveValues(dname="Grouped_Cluster")
-  
+  store <- reactiveValues(dname = "Grouped_Cluster")
+
   # create filename
   fn_downloadname <- reactive({
-    
-    if(input$fformat=="png") filename <- paste0(store$dname,".png",sep="")
-    if(input$fformat=="tiff") filename <- paste0(store$dname,".tif",sep="")
-    if(input$fformat=="jpeg") filename <- paste0(store$dname,".jpg",sep="")
-    if(input$fformat=="pdf") filename <- paste0(store$dname,".pdf",sep="")
+    if (input$fformat == "png") filename <- paste0(store$dname, ".png", sep = "")
+    if (input$fformat == "tiff") filename <- paste0(store$dname, ".tif", sep = "")
+    if (input$fformat == "jpeg") filename <- paste0(store$dname, ".jpg", sep = "")
+    if (input$fformat == "pdf") filename <- paste0(store$dname, ".pdf", sep = "")
     return(filename)
-  })  
-  
+  })
 
-  
+
+
   # download function
-  fn_download <- function()
-  {
-    
+  fn_download <- function() {
     fheight <- input$fheight
     fwidth <- input$fwidth
-    
-    if(input$fformat=="pdf") fheight <- round(fheight*0.3937,2)
-    if(input$fformat=="pdf") fwidth <- round(fwidth*0.3937,2)
-    
-    if(input$fformat=="png") png(fn_downloadname(), height=fheight, width=fwidth, res=330, units="cm")
-    if(input$fformat=="tiff") tiff(fn_downloadname(), height=fheight, width=fwidth, res=330, units="cm",compression="lzw")
-    if(input$fformat=="jpeg") jpeg(fn_downloadname(), height=fheight, width=fwidth, res=330, units="cm",quality=100)
-    if(input$fformat=="pdf") pdf(fn_downloadname(), height=fheight, width=fwidth)
-    net_data3 <- net3() 
-    plot_network(net_data3, 
-                 net_data3, 
-                 group = "groupname",
-                 color_col = "cluster_col",
-                 scale = input$scalesize3, 
-                 circle_color = "red", 
-                 layout = input$layouts3, 
-                 legend = "off",
-                 seed = input$seed3)
+
+    if (input$fformat == "pdf") fheight <- round(fheight * 0.3937, 2)
+    if (input$fformat == "pdf") fwidth <- round(fwidth * 0.3937, 2)
+
+    if (input$fformat == "png") png(fn_downloadname(), height = fheight, width = fwidth, res = 330, units = "cm")
+    if (input$fformat == "tiff") tiff(fn_downloadname(), height = fheight, width = fwidth, res = 330, units = "cm", compression = "lzw")
+    if (input$fformat == "jpeg") jpeg(fn_downloadname(), height = fheight, width = fwidth, res = 330, units = "cm", quality = 100)
+    if (input$fformat == "pdf") pdf(fn_downloadname(), height = fheight, width = fwidth)
+    net_data3 <- net3()
+    plot_network(net_data3,
+      net_data3,
+      group = "groupname",
+      color_col = "cluster_col",
+      scale = input$scalesize3,
+      circle_color = "red",
+      layout = input$layouts3,
+      legend = "off",
+      seed = input$seed3
+    )
     dev.off()
-  } 
-  
+  }
+
 
   # download handler
   output$bn_download <- downloadHandler(
     filename = fn_downloadname,
     content = function(file) {
       fn_download()
-      file.copy(fn_downloadname(), file, overwrite=T)
+      file.copy(fn_downloadname(), file, overwrite = T)
     }
   )
 
-######################## Interactive Visualization II  ######################
+  ######################## Interactive Visualization II  ######################
   rv <- reactiveValues()
 
   output$networkVis1 <- renderVisNetwork({
     net_data <- net2()
-    plot_network_vis1(net_data$data_p[net_data$data_p$cluster == input$vis_cluster,],
-                      net_data$data_a)
-
+    plot_network_vis1(
+      net_data$data_p[net_data$data_p$cluster == input$vis_cluster, ],
+      net_data$data_a
+    )
   })
-  
+
   # Attribute the input value to the reactive variable
   observeEvent(input$selected_and_nearest_nodes, {
     rv$data <- input$selected_and_nearest_nodes
   })
-  
-  
+
+
   # filter based on reactive variable
-  rt<-reactive({
+  rt <- reactive({
     req(net2(), net2()$data_a, input$vis_cluster)
     net_data <- net2()
-    edges = net_data$data_a[net_data$data_a$cluster == input$vis_cluster,]
+    edges <- net_data$data_a[net_data$data_a$cluster == input$vis_cluster, ]
     rownames(edges) <- NULL
     edges$group_col <- NULL
     edges
-    
   })
-  
 
-  
-  nearest_node_csv <- reactive({rt()})
-  
-  output$download_trend <- downloadHandler(filename =  'nearest_to_center_nodes_data.csv',
-                                           content = function(file) {write.csv(nearest_node_csv(), file, row.names=FALSE)})
-  
+
+
+  nearest_node_csv <- reactive({
+    rt()
+  })
+
+  output$download_trend <- downloadHandler(
+    filename = "nearest_to_center_nodes_data.csv",
+    content = function(file) {
+      write.csv(nearest_node_csv(), file, row.names = FALSE)
+    }
+  )
+
 
   output$tbl <- renderDT({
-      rt()
+    rt()
   })
-  
-  
+
+
   output$tbl <- DT::renderDataTable({
     req(rt())
-    datatable(rt(), options = list(pageLength = 6,scrollX = TRUE))
+    datatable(rt(), options = list(pageLength = 6, scrollX = TRUE))
   })
-  
-  
+
+
   observe({
-    
-    list=names(acresultdata())
+    list <- names(acresultdata())
     # Create a vector of the desired column indices
     selected_indices <- c(2, 3, 7:length(list))
-    
+
     # Extract the column names based on the selected indices
     selected_colnames <- list[selected_indices]
-    exclude_columns2 <- c( "reads", "read" )
-    
+    exclude_columns2 <- c("reads", "read")
+
     selected_colnames <- setdiff(selected_colnames, exclude_columns2)
-    
+
     # Update the select input with the selected column names
     updateSelectInput(session, "vis_group",
-                      choices = selected_colnames)
+      choices = selected_colnames
+    )
   })
-  
-  
-  
-  
+
+
+
+
   net <- reactive({
-    data_p <- processed_reactive() %>% select(-sequence_id, -v_call, -j_call, -junction) %>% distinct()
+    data_p <- processed_reactive() %>%
+      select(-sequence_id, -v_call, -j_call, -junction) %>%
+      distinct()
     data_a <- acresultdata() %>% mutate(locus = gsub("V.*", "", v_call))
     req(input$vis_group)
     group_value <- rlang::sym(input$vis_group)
     palette <- brewer.pal(8, input$vis_colors)
     colorCount <- length(unique(data_a[[group_value]]))
     colors <- colorRampPalette(palette)(colorCount)
-    color_list<-setNames(colors, unique(data_a[[group_value]]))
+    color_list <- setNames(colors, unique(data_a[[group_value]]))
     # Color mapping function
     get_color <- function(value) {
       return(color_list[as.character(value)])
     }
-    
+
     # Apply the color mapping to the data dataframe
-    data_a <- data_a %>% 
+    data_a <- data_a %>%
       mutate(group_col = sapply(get(group_value), get_color))
     return(list(data_p = data_p, data_a = data_a))
-    
-  }) 
-  
-  output$networkVis2 <- renderVisNetwork({
-    net_data <- net()
-    plot_network_vis2(net_data$data_p[net_data$data_p$cluster == input$vis_cluster,],
-                      net_data$data_a,
-                      layout = input$vis_layout,
-                      group = input$vis_group,
-                      color_col = "group_col")
   })
 
-  
+  output$networkVis2 <- renderVisNetwork({
+    net_data <- net()
+    plot_network_vis2(net_data$data_p[net_data$data_p$cluster == input$vis_cluster, ],
+      net_data$data_a,
+      layout = input$vis_layout,
+      group = input$vis_group,
+      color_col = "group_col"
+    )
+  })
+
+
   #### ----------------------------####
   #### Phylogenetic Analysis      #####
   #### ----------------------------####
-  ######################## Phylogenetic Plot ######################  
+  ######################## Phylogenetic Plot ######################
 
   observe({
-    
-    list=names(acresultdata())
+    list <- names(acresultdata())
     # Create a vector of the desired column indices
     selected_indices <- c(2, 3, 7:length(list))
-    
+
     # Extract the column names based on the selected indices
     selected_colnames <- list[selected_indices]
-    exclude_columns2 <- c( "reads", "read" )
-    
+    exclude_columns2 <- c("reads", "read")
+
     selected_colnames <- setdiff(selected_colnames, exclude_columns2)
-    
+
     # Update the select input with the selected column names
     updateSelectInput(session, "phy_group",
-                      choices = selected_colnames)
+      choices = selected_colnames
+    )
   })
-  
-  
-  
 
-  
+
+
+
+
   # filter based on reactive variable
   tree_output <- reactive({
-
-    data_phy <- acresultdata() %>% mutate(locus = gsub("V.*", "", v_call)) %>% dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>% 
+    data_phy <- acresultdata() %>%
+      mutate(locus = gsub("V.*", "", v_call)) %>%
+      dplyr::mutate(v_family = gsub("-.*", "", v_call)) %>%
       dplyr::mutate(j_family = gsub("-.*", "", j_call))
     req(input$phy_group)
     group_value <- rlang::sym(input$phy_group)
     palette <- brewer.pal(8, input$phy_color)
     colorCount <- length(unique(data_phy[[group_value]]))
     colors <- colorRampPalette(palette)(colorCount)
-    color_list<-setNames(colors, unique(data_phy[[group_value]]))
+    color_list <- setNames(colors, unique(data_phy[[group_value]]))
     # Color mapping function
     get_color <- function(value) {
       return(color_list[as.character(value)])
     }
-    
+
     # Apply the color mapping to the data dataframe
-    net_phy_data <- data_phy %>% 
+    net_phy_data <- data_phy %>%
       mutate(group_col = sapply(get(group_value), get_color))
-    
-    
-    phy_data <- net_phy_data[net_phy_data$cluster == input$phy_cluster,]
-    
+
+
+    phy_data <- net_phy_data[net_phy_data$cluster == input$phy_cluster, ]
+
     pure_data <- phy_data %>% distinct(cluster, junction)
-    
-    seqs=AAStringSet(pure_data$junction)
-    names(seqs)<-paste(1:(length(pure_data$junction)))
-    info<- as_tibble(phy_data)
+
+    seqs <- AAStringSet(pure_data$junction)
+    names(seqs) <- paste(1:(length(pure_data$junction)))
+    info <- as_tibble(phy_data)
     aligned_seqs <- AlignSeqs(seqs)
     seqs_AAbin <- as.AAbin(aligned_seqs)
-    
-    id_mapping <- data.frame(node = as.numeric(names(aligned_seqs)),
-                              junction = gsub("-","", as.character(aligned_seqs)))
-    
+
+    id_mapping <- data.frame(
+      node = as.numeric(names(aligned_seqs)),
+      junction = gsub("-", "", as.character(aligned_seqs))
+    )
+
     phy_group_value <- rlang::sym(input$phy_group)
-    
+
     id_mapping2 <- id_mapping %>%
       merge(info, by = "junction") %>%
       group_by(junction) %>%
@@ -1678,13 +1939,15 @@ server <- function(input, output, session) {
         Label = ifelse(
           sum_histo == 1,
           (!!phy_group_value),
-          paste(unique(!!phy_group_value), collapse = "="))) %>%
+          paste(unique(!!phy_group_value), collapse = "=")
+        )
+      ) %>%
       dplyr::mutate(Label2 = ifelse(sum_histo != 1, "public", !!phy_group_value)) %>%
       ungroup() %>%
       dplyr::mutate(color2 = ifelse(Label2 == "public", "black", group_col)) %>%
       distinct(node, junction, Label2, Label, color2) %>%
       arrange(node)
-    
+
     names(seqs_AAbin) <- id_mapping2$Label
 
     aligned_seqs_phyDat <- as.phyDat(as(aligned_seqs, "matrix"), type = "AA")
@@ -1701,59 +1964,66 @@ server <- function(input, output, session) {
     tree$tip.label <- as.character(id_mapping2$Label2)
 
 
-    groupInfo <- split(tree$tip.label,substr(tree$tip.label, start=1, stop=80))
+    groupInfo <- split(tree$tip.label, substr(tree$tip.label, start = 1, stop = 80))
     new_tree3 <- groupOTU(tree, groupInfo)
 
-    color_map <- unique(id_mapping2[, c('Label2', 'color2')])
+    color_map <- unique(id_mapping2[, c("Label2", "color2")])
     color_vector <- setNames(color_map$color2, color_map$Label2)
-    
-    unique_ids <- paste(id_mapping2$junction, seq_along(id_mapping2$Label2), sep="_")
+
+    unique_ids <- paste(id_mapping2$junction, seq_along(id_mapping2$Label2), sep = "_")
 
     names(seqs_AAbin) <- unique_ids
 
     new_tree3$tip.label <- unique_ids
-    
 
-    p <- ggtree(new_tree3, size=input$phy_size, aes(color=group), layout=input$phy_layout) %<+% id_mapping2 + 
-      scale_colour_manual(values = color_vector) + 
-      geom_tiplab(aes(label=Label),size=input$phy_node_size) + theme(legend.position = "none")
+    # Apply layout-specific modifications
+    if (input$phy_layout == "fan" && !is.null(input$open_angle)) {
+      p <- ggtree(new_tree3, size = input$phy_size, aes(color = group), layout = input$phy_layout, open.angle = input$open_angle) %<+% id_mapping2 +
+        scale_colour_manual(values = color_vector) +
+        geom_tiplab(aes(label = Label), size = input$phy_node_size)
+    } else if (input$phy_layout %in% c("ellipse", "fan", "circular") && !is.null(input$branch_length)) {
+      p <- ggtree(new_tree3, size = input$phy_size, aes(color = group), layout = input$phy_layout, branch.length = input$branch_length) %<+% id_mapping2 +
+        scale_colour_manual(values = color_vector) +
+        geom_tiplab(aes(label = Label), size = input$phy_node_size)
+    } else {
+      p <- ggtree(new_tree3, size = input$phy_size, aes(color = group), layout = input$phy_layout) %<+% id_mapping2 +
+        scale_colour_manual(values = color_vector) +
+        geom_tiplab(aes(label = Label), size = input$phy_node_size)
+    }
 
-    msaplot(p, seqs_AAbin, offset=input$msa_off, width=input$msa_width)
-    
-    
+    if (input$include_msa) {
+      p <- msaplot(p, seqs_AAbin, offset = input$msa_off, width = input$msa_width)
+    }
+    p
   })
 
   output$phy_plot <-
     renderPlot(
       tree_output(),
-      width = function()
-         input$width_phy, 
-       height = function()
-         input$height_phy
+      width = function() {
+        input$width_phy
+      },
+      height = function() {
+        input$height_phy
+      }
     )
-  
-  
+
+
   output$download_phy <- downloadHandler(
     filename = function() {
       paste0("Tree Plot.", input$extension_phy)
     },
-    
     content = function(file) {
       ggsave(
         file,
-        plot =  tree_output(),
+        plot = tree_output(),
         device = input$extension_phy,
         width = input$user_width_phy,
         height = input$user_height_phy,
         units = "cm",
-        dpi=330,
-        bg="white"
+        dpi = 330,
+        bg = "white"
       )
     }
-    
   )
-  
-
-  
-  
 }
