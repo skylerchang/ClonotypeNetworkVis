@@ -25,12 +25,13 @@ siderbar <-
       ),
       menuItem("Statistical Analysis", icon = icon("chart-bar"),
                menuSubItem("Clonotype Distribution", tabName = "tab6"),
-               menuSubItem("Clonotype Overlap", tabName = "tab7")
+               menuSubItem("Clonotype Overlap", tabName = "tab7"),
+               menuSubItem("Circos Plot", tabName = "tab8")
+               
       ),
       menuItem("Network Analysis", icon = icon("code-branch"),
-               menuSubItem("Scatter Plot of Network Parameters", tabName = "tab8"),
-               menuSubItem("Grouped Clusters", tabName = "tab9"),
-               menuSubItem("Interactive Visualization", tabName = "tab10"),
+               menuSubItem("Scatter Plot of Network Parameters", tabName = "tab9"),
+               menuSubItem("Grouped Clusters", tabName = "tab10"),
                menuSubItem("Interactive Visualization", tabName = "tab11")
       ),
       menuItem("Phylogenetic Analysis", icon = icon("network-wired"),
