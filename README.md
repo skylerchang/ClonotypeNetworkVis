@@ -24,6 +24,7 @@ The Statistical Analysis module provides various visualizations and analyses to 
 
 - **Clonotype Distribution**: View clonotype distributions across different junction lengths, cell types, samples, and V and J genes.
 - **Clonotype Overlap**: Check for clonotype overlaps across different samples, cell types, or tissues.
+- **Circos Plot**: View the top usage of V and J gene pairs across different samples, cell types, or tissues.
 
 ## Network Analysis
 
